@@ -19,6 +19,7 @@ export const uploadFileController = async (req, res) => {
       message: "File uploaded successfully",
       file: fileData,
       timestamp,
+      test: null,
     });
   } catch (error) {
     res.status(500).json({
