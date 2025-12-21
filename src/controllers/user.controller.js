@@ -87,8 +87,11 @@ const addLoginController = async (req, res) => {
 
 const getUser = async (req, res) => {
   try {
-    const userId = req.user.id;
+    console.log("try");
+    const userId = req.user._id;
+    console.log(userId, "userId");
     const user = await User.findById(userId);
+    console.log(user, "user");
     res.status(200).json({
       message: "User data fetched",
       data: user,
