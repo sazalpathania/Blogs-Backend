@@ -2,12 +2,6 @@ import Blog from "../models/blogs.model.js";
 
 const addBlogController = async (req, res) => {
   try {
-    console.log("Blog controller start");
-    console.log("===== ADD BLOG START =====");
-    console.log("Headers:", req.headers);
-    console.log("Body:", req.body);
-    console.log("File:", req.file);
-    console.log("User:", req.user);
     const { title, description } = req.body;
 
     if (!title || !description || !req.file) {
@@ -20,7 +14,7 @@ const addBlogController = async (req, res) => {
       title: title,
       content: description,
       image: `/public/${req.file.filename}`,
-      author: req.user.id,
+      author: req.user._id,
     });
     await blog.save();
 
@@ -51,9 +45,8 @@ const geBlogsController = async (req, res) => {
 
 const getMyblogsController = async (req, res) => {
   try {
-    console.log("my blogs");
-    const userId = req.user.id;
-    const blogs = (await Blog.find({ author: userId }))
+    const userId = req.user._id;
+    const blogs = await Blog.find({ author: userId })
       .populate("author", "username")
       .sort({ createdAt: -1 });
 
@@ -82,7 +75,7 @@ const editBlogController = async (req, res) => {
       });
     }
 
-    if (blog.author.toString() !== user.id) {
+    if (blog.author.toString() !== userId) {
       return res.status(403).json({
         message: "You are not allowed to edit this blog",
       });
@@ -108,7 +101,7 @@ const editBlogController = async (req, res) => {
 const deleteBlogController = async (req, res) => {
   try {
     const blogId = req.params.id;
-    const userId = req.user.id;
+    const userId = req.user._id;
 
     const blog = await Blog.findById(blogId);
     if (!blog) {
@@ -116,8 +109,13 @@ const deleteBlogController = async (req, res) => {
         message: "Blog not found",
       });
     }
+    if (!blog.author) {
+      return res.status(400).json({
+        message: "Blog author missing",
+      });
+    }
 
-    if (blog.author.toString() !== user.id) {
+    if (blog.author.toString() !== userId.toString()) {
       return res.status(401).json({
         message: "You are not allowed to delete this blog",
       });
