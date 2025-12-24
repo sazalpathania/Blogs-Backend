@@ -65,7 +65,7 @@ const getMyblogsController = async (req, res) => {
 const editBlogController = async (req, res) => {
   try {
     const blogId = req.params.id;
-    const userId = req.user.id;
+    const userId = req.user._id;
     const { title, description } = req.body;
 
     const blog = await Blog.findById(blogId);
@@ -75,7 +75,7 @@ const editBlogController = async (req, res) => {
       });
     }
 
-    if (blog.author.toString() !== userId) {
+    if (blog.author.toString() !== userId.toString()) {
       return res.status(403).json({
         message: "You are not allowed to edit this blog",
       });
@@ -83,7 +83,7 @@ const editBlogController = async (req, res) => {
 
     if (title) blog.title = title;
     if (description) blog.content = description;
-
+    if (req.file) blog.image = `/public/${req.file.filename}`;
     await blog.save();
 
     return res.status(200).json({

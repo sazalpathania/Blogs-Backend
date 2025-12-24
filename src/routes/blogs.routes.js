@@ -14,7 +14,7 @@ const blogRouter = Router();
 blogRouter.post("/add", verifyToken, upload, addBlogController);
 blogRouter.get("/get", geBlogsController);
 blogRouter.get("/myblog", verifyToken, getMyblogsController);
-blogRouter.put("/edit/:id", verifyToken, editBlogController);
+blogRouter.put("/edit/:id", verifyToken, upload, editBlogController);
 blogRouter.delete("/delete/:id", verifyToken, deleteBlogController);
 
 export default blogRouter;
