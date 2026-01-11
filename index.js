@@ -18,7 +18,13 @@ if (!fs.existsSync(publicDir)) {
 const app = express();
 const port = 4000;
 
-app.use(cors());
+app.use(
+  cors({
+    origin: "https://695a174249c226000825f2dc--blogs-tst.netlify.app/",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+  })
+);
 
 app.use(express.json());
 app.use("/public", express.static("public"));
